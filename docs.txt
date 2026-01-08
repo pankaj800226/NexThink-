@@ -1,0 +1,54 @@
+Auth
+
+Todo , dec, price category(study,work, personal) priority(low,high, medium)
+
+Timer focus
+
+project management
+
+
+// import { v2 as cloudinary } from "cloudinary";
+
+// cloudinary.config({
+//     cloud_name: "dursv2be9",
+//     api_key: "934619233521868",
+//     api_secret: "gN_iVOpJirIoQHzLVE-iQzSh3Dw",
+// })
+
+// export const uploadCourse = async (req, res) => {
+//     try {
+//         const { courseName, courseCategory } = req.body;
+
+//         if (!req.file) {
+//             return res.status(400).json({ error: "No file uploaded" });
+//         }
+
+//         // Upload file directly from buffer
+//         const uploadResult = await cloudinary.uploader.upload_stream(
+//             {
+//                 folder: "codeX_course_thumbnail",
+//             },
+//             async (error, result) => {
+//                 if (error) {
+//                     console.error(error);
+//                     return res.status(500).json({ message: "Cloudinary upload failed" });
+//                 }
+
+//                 const courseUpload = await Course.create({
+//                     courseName,
+//                     courseCategory,
+//                     thumbnail: result.secure_url, 
+//                 });
+
+//                 res.status(200).json(courseUpload);
+//             }
+//         );
+
+//         // Pipe file buffer to cloudinary
+//         uploadResult.end(req.file.buffer);
+
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: "Server Error" });
+//     }
+// };
