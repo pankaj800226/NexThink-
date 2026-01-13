@@ -16,7 +16,7 @@ const Header = () => {
 
     const email = localStorage.getItem('EMAIL')
 
-    const logOut = ()=>{
+    const logOut = () => {
         localStorage.clear()
         navigate('/login')
 
@@ -26,15 +26,18 @@ const Header = () => {
         <header>
             <div className='logo'>
                 <div>
-                    <Link to={'/'}>NexPilot</Link>
+                    <Link to={'/'}>NexThink</Link>
                 </div>
 
             </div>
 
-            <nav>
 
+            <nav>
                 {email ? (
                     <div>
+                        {/* <MenuItem> */}
+                        <Link to={'/timechallaner'}>Challanger</Link>
+                        {/* </MenuItem> */}
                         <Button
                             id="basic-button"
                             aria-controls={open ? 'basic-menu' : undefined}

@@ -72,6 +72,45 @@ export const getTask = async (req, res) => {
   }
 };
 
+export const taskId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const task = await Todo.findById(id);
+
+    if (!task) {
+      return res.status(404).json({ message: "task not found" });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, price, category, priority, status } = req.body;
+
+    const updateTask = await Todo.findByIdAndUpdate(
+      id,
+      { title, description, price, category, priority, status },
+      { new: true }
+    );
+
+    if (!updateTask) {
+      return res.status(404).json({ message: "task not found" });
+    }
+
+    res.status(200).json(updateTask);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;

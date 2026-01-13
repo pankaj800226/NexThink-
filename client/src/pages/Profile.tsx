@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
+import ApiError from "../components/ApiError";
 
 interface User {
   username: string,
@@ -94,11 +95,12 @@ const Profile = () => {
     } catch (error) {
       console.log(error);
       toast.error("Error updating profile")
-    
+      setError("Api Fetching Error")
+
     }
   }
 
-  if (error) return <h2>{error}</h2>
+  if (error) return <ApiError error={error} />
   if (loader) return <Loading />
 
   return (
@@ -107,46 +109,48 @@ const Profile = () => {
 
       <main>
         <motion.div
-          className="profile_conatiner"
-          initial={{ opacity: 0, y: 20 }}
+          className="profile_container"
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
           <motion.div
             className="profile_left"
-            whileHover={{ scale: 1.05, rotate: 3, boxShadow: "0px 0px 20px rgba(255,255,255,0.2)" }}
+            whileHover={{ scale: 1.06 }}
+            transition={{ type: "spring", stiffness: 120 }}
           >
             <motion.img
               src={profile?.avatar}
               alt="User Avatar"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
             />
           </motion.div>
 
           <motion.div
             className="profile_right"
-            initial={{ x: 50, opacity: 0 }}
+            initial={{ x: 40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
             <h1>{profile?.username}</h1>
-            <p>{profile?.email}</p>
-            <p>Creater</p>
-            <motion.div whileHover={{ scale: 1.1 }} style={{ display: 'inline-block' }}>
-              <Button onClick={() => setEditDialogOpen(true)}>
-                <Edit />
+            <p className="email">{profile?.email}</p>
+            <span className="role">Creator</span>
+
+            <motion.div whileHover={{ scale: 1.08 }} className="edit_btn">
+              <Button onClick={() => setEditDialogOpen(true)} startIcon={<Edit />}>
+                Edit Profile
               </Button>
             </motion.div>
           </motion.div>
         </motion.div>
+
       </main>
 
       <Dialog
         open={editDialogOpen} onClose={() => setEditDialogOpen(false)}
         fullScreen={isMobile} fullWidth maxWidth="sm"
-        TransitionComponent={motion.div} // optional: dialog animation
       >
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>

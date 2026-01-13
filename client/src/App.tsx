@@ -5,6 +5,7 @@ import Loading from './components/Loading'
 import { Toaster } from 'react-hot-toast'
 import SaveRoute from './protectedRoute/SaveRoute'
 
+
 // pages configration
 const Home = React.lazy(() => import('./pages/Home'))
 const Register = React.lazy(() => import('./components/auth/Register'))
@@ -12,7 +13,7 @@ const Login = React.lazy(() => import('./components/auth/Login'))
 const ForgetPassword = React.lazy(() => import('./components/auth/ForgetPassword'))
 const OtpVerify = React.lazy(() => import('./components/auth/OtpVerify'))
 const UpdatePassword = React.lazy(() => import('./components/auth/UpdatePassword'))
-
+const TimerChallanger = React.lazy(() => import('./pages/TimerChallanger'))
 
 
 const Dashboard = React.lazy(() => import('./pages/Dashboard'))
@@ -22,6 +23,8 @@ const Profile = React.lazy(() => import('./pages/Profile'))
 const CreateTodo = React.lazy(() => import('./pages/Todo-List/CreateTodo'))
 const ManageTodo = React.lazy(() => import('./pages/Todo-List/ManageTodo'))
 const TodoEdit = React.lazy(() => import('./pages/Todo-List/TodoEdit'))
+const TodoDetails = React.lazy(() => import('./pages/Todo-List/TodoDetails'))
+
 
 
 
@@ -34,6 +37,8 @@ import './styles/feature.scss'
 import './styles/register.scss'
 import './styles/profile.scss'
 import './styles/Todo-list/manageTodo.scss'
+import './styles/Todo-list/todoDetails.scss'
+
 
 
 const AppLayout = () => {
@@ -44,7 +49,8 @@ const AppLayout = () => {
     "/createTodo",
     "/managetodo",
     "/profile",
-    "/todoEdit"
+    "/todoEdit",
+    "/todoDetails",
   ];
 
   // dashboard route check
@@ -67,6 +73,7 @@ const AppLayout = () => {
 
           <Route element={<SaveRoute />}>
             <Route path='/' element={<Home />} />
+            <Route path='/timechallaner' element={<TimerChallanger />} />
 
             {/*In dashboard all page will be here */}
             <Route path='/dashboard' element={<Dashboard />} />
@@ -74,7 +81,10 @@ const AppLayout = () => {
             {/* todo part */}
             <Route path='/createTodo' element={<CreateTodo />} />
             <Route path='/managetodo' element={<ManageTodo />} />
-            <Route path='/todoEdit' element={<TodoEdit />} />
+            <Route path='/todoEdit/:id' element={<TodoEdit />} />
+            <Route path='/todoDetails/:id' element={<TodoDetails />} />
+
+
 
           </Route>
 

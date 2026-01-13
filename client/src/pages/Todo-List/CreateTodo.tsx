@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import { AddTask } from "@mui/icons-material";
 import { motion } from "framer-motion";
-// import { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { api } from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-// import { TaskContext } from "../../context/todo/TaskContext";
+import ApiError from "../../components/ApiError";
 
 const CreateTodo = () => {
     const [formData, setFormData] = useState({
@@ -31,6 +30,7 @@ const CreateTodo = () => {
     const [btnLoader, setBtnLoader] = useState(false)
     const token = localStorage.getItem('TOKEN')
     const navigate = useNavigate()
+    const [error, setError] = useState('')
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -75,12 +75,15 @@ const CreateTodo = () => {
         } catch (error) {
             console.log(error);
             toast.error("Error creating todo")
+            setError("Api fetching error")
 
         } finally {
             setBtnLoader(false)
         }
 
     }
+
+    if (error) return <ApiError error={error} />
 
     return (
         <div className="dashboard_container">

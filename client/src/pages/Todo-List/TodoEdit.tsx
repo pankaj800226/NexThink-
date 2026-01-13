@@ -8,7 +8,13 @@ import {
     Paper
 } from "@mui/material";
 import { AddTask } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Loading from "../../components/Loading";
+import axios from "axios";
+import { api } from "../../api/api";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import ApiError from "../../components/ApiError";
 
 const TodoEdit = () => {
     const [formData, setFormData] = useState({
@@ -22,7 +28,10 @@ const TodoEdit = () => {
     })
 
     const [btnLoader, setBtnLoader] = useState(false);
-
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false)
+    const { id } = useParams()
+    const navigate = useNavigate()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -33,10 +42,58 @@ const TodoEdit = () => {
         }))
     }
 
+    useEffect(() => {
+        const fetchTaskID = async () => {
+            try {
+                setLoading(true)
+                const res = await axios.get(`${api}/api/todo/getTaskId/${id}`)
+                setFormData({
+                    title: res.data.title || "",
+                    description: res.data.description || "",
+                    price: res.data.price || "",
+                    category: res.data.category || "",
+                    priority: res.data.priority || "",
+                    status: res.data.status || "",
+                    createdAt: res.data.createdAt || new Date().toISOString()
+                });
+
+            } catch (error) {
+                console.log(error);
+                setError("Api fetching error")
+
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTaskID()
+    }, [id])
+
     // handle edit 
-    const handleEdit = () => {
-        console.log(formData)
+    const handleEdit = async () => {
+        const { title, description, price, category, priority, status } = formData
+
+        try {
+            setBtnLoader(true)
+            await axios.put(`${api}/api/todo/editTodo/${id}`, {
+                title, description, price, category, priority, status
+            })
+
+            toast.success("Todo updated successfully")
+            navigate('/managetodo')
+            
+        } catch (error) {
+            console.log(error);
+            toast.error("Error while editing todo")
+
+        } finally {
+            setBtnLoader(false)
+        }
     }
+
+    if (error) return <ApiError error={error}/>
+    if (loading) return <Loading />
+
 
 
     return (

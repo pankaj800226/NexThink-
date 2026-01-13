@@ -2,7 +2,6 @@ import { Button } from "@mui/material";
 import { ArrowRightAlt } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
 const Banner = () => {
     return (
         <div className="banner_wrapper">

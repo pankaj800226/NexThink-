@@ -9,6 +9,7 @@ import axios from "axios";
 import { api } from "../../api/api";
 import Loading from "../../components/Loading";
 import toast from "react-hot-toast";
+import ApiError from "../../components/ApiError";
 
 export interface TaskProps {
     _id: string
@@ -91,7 +92,7 @@ const ManageTodo = () => {
     }
 
     if (loader) return <Loading />
-    if (error) return <p>{error}</p>
+    if (error) return <ApiError error={error}/>
 
     return (
         <div className="dashboard_container">
@@ -158,7 +159,7 @@ const ManageTodo = () => {
                                     </Typography>
 
                                     <div className="todo_action">
-                                        <Link to={'/todoEdit'}>
+                                        <Link to={`/todoDetails/${todo._id}`}>
                                             <motion.div whileHover={{ scale: 1.2 }}>
                                                 <Button className="edit_btn">
                                                     <Visibility />
@@ -166,7 +167,7 @@ const ManageTodo = () => {
                                             </motion.div>
                                         </Link>
 
-                                        <Link to={'/todoEdit'}>
+                                        <Link to={`/todoEdit/${todo._id}`}>
                                             <motion.div whileHover={{ scale: 1.2 }}>
                                                 <Button className="edit_btn">
                                                     <Edit />
