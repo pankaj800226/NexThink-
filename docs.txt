@@ -1,54 +1,170 @@
-Auth
+NexThink - Project Documentation
+================================
 
-Todo , dec, price category(study,work, personal) priority(low,high, medium)
+NexThink is a full-stack productivity app ("Boost Your Focus, Master Your Time").
+Users sign up, manage their tasks (todos), and get email notifications.
 
-Timer focus
+  client/   React 19 + TypeScript + Vite + MUI + SCSS + framer-motion
+  backend/  Node.js + Express 5 + MongoDB (Mongoose) + JWT + Cloudinary + Nodemailer
 
-project management
+
+-------------------------------------------------------------------------------
+1. FEATURE STATUS
+-------------------------------------------------------------------------------
+
+[DONE] Auth
+  - Register with username, email, password and avatar image
+    (avatar uploaded to Cloudinary, folder "user_avatar"; password hashed with bcrypt)
+  - Login -> JWT token (valid 10 days), saved in localStorage
+    (TOKEN, USERNAME, EMAIL, USERID)
+  - Protected routes (SaveRoute): no token -> redirect to /login
+  - Logout (clears localStorage)
+  - Forgot password: 6-digit OTP sent by email, valid 10 minutes
+  - OTP verify page (6 input boxes + 10 min countdown timer)
+  - Reset / update password
+
+[DONE] Profile / Dashboard
+  - Dashboard page = sidebar + profile card (avatar, username, email)
+  - Edit profile (username, email) in a dialog
+
+[DONE] Todo (task) management
+  - Fields: title, description, price, category, priority, status
+      category : Work | Personal | Study | Other
+      priority : Low | Medium | High
+      status   : pending | inprogress | completed
+  - Create todo -> also sends a "Task Created" email to the user (in background)
+  - Manage todo: list all of the user's tasks (newest first)
+      - search by title (500 ms debounce)
+      - filter by category and priority
+      - colored chips for status / priority
+      - delete task
+  - Edit todo
+  - Todo details page
+
+[DONE] Other
+  - Landing page (Banner + Feature cards) with framer-motion animations
+  - Responsive sidebar (collapses under 1100px width)
+  - Toast notifications (react-hot-toast), loading + API error components
+  - API rate limit: 100 requests / 15 min per IP
+
+[PLANNED / NOT DONE YET]
+  - Timer focus / "Challanger" page (/timechallaner) - page exists but is empty
+  - Dashboard analytics - shown on Feature page, not built
+  - Project management / project organization - shown on Feature page, not built
+  - Resend OTP button (shown after countdown, has no action yet)
 
 
-// import { v2 as cloudinary } from "cloudinary";
+-------------------------------------------------------------------------------
+2. FRONTEND ROUTES (client/src/App.tsx)
+-------------------------------------------------------------------------------
 
-// cloudinary.config({
-//     cloud_name: "dursv2be9",
-//     api_key: "934619233521868",
-//     api_secret: "gN_iVOpJirIoQHzLVE-iQzSh3Dw",
-// })
+Public:
+  /register          Register
+  /login             Login
+  /forgetpassword    Send OTP
+  /otpverify         Verify OTP
+  /updatepassword    Set new password
 
-// export const uploadCourse = async (req, res) => {
-//     try {
-//         const { courseName, courseCategory } = req.body;
+Protected (need TOKEN):
+  /                  Home (Banner + Features)
+  /timechallaner     Timer challenge (empty)
+  /dashboard         Dashboard + profile
+  /profile           Profile
+  /createTodo        Create todo
+  /managetodo        List / search / filter / delete todos
+  /todoEdit/:id      Edit todo
+  /todoDetails/:id   Todo details
 
-//         if (!req.file) {
-//             return res.status(400).json({ error: "No file uploaded" });
-//         }
+API base URL: client/src/api/api.ts  (currently http://localhost:8000)
 
-//         // Upload file directly from buffer
-//         const uploadResult = await cloudinary.uploader.upload_stream(
-//             {
-//                 folder: "codeX_course_thumbnail",
-//             },
-//             async (error, result) => {
-//                 if (error) {
-//                     console.error(error);
-//                     return res.status(500).json({ message: "Cloudinary upload failed" });
-//                 }
 
-//                 const courseUpload = await Course.create({
-//                     courseName,
-//                     courseCategory,
-//                     thumbnail: result.secure_url, 
-//                 });
+-------------------------------------------------------------------------------
+3. BACKEND API (base: http://localhost:8000)
+-------------------------------------------------------------------------------
 
-//                 res.status(200).json(courseUpload);
-//             }
-//         );
+Auth header for protected routes:  Authorization: Bearer <token>
 
-//         // Pipe file buffer to cloudinary
-//         uploadResult.end(req.file.buffer);
+User  (/api/user)
+  POST /register         multipart: username, email, password, file (avatar)
+  POST /login            { email, password } -> { token, userId, username, email }
+  GET  /profile          [auth] current user (without password)
+  PUT  /editProfile      [auth] { username, email }
+  POST /forgot-password  { email } -> emails OTP
+  POST /otpVerify        { email, otp }
+  POST /reset-password   { email, newPassword }
 
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: "Server Error" });
-//     }
-// };
+Todo  (/api/todo)
+  POST   /createTodo     [auth] { title, description, price, category, priority, status }
+  GET    /getTask        [auth] -> { findTask: [...] }
+  GET    /getTaskId/:id  single task
+  PUT    /editTodo/:id   { title, description, price, category, priority, status }
+  DELETE /deleteTask/:id
+
+
+-------------------------------------------------------------------------------
+4. DATABASE MODELS (MongoDB)
+-------------------------------------------------------------------------------
+
+User: username, email, password (hashed), avatar (url), otp, otpExpiry, timestamps
+Todo: userId (ref User), title, description, price, category, priority, status,
+      createdAt, timestamps
+
+
+-------------------------------------------------------------------------------
+5. SETUP
+-------------------------------------------------------------------------------
+
+Backend:
+  cd backend
+  npm install
+  create backend/.env with:
+    PORT=8000
+    MONGOOSE_URL=<mongodb connection string>
+    JWT_SECRET_KEY=<random secret>
+    CLOUD_NAME=<cloudinary cloud name>
+    CLOUD_API_KEY=<cloudinary api key>
+    CLOUD_API_SECRET=<cloudinary api secret>
+    EMAIL_USER=<gmail address>
+    EMAIL_PASS=<gmail app password>
+  npm run dev        (nodemon index.js)
+
+Client:
+  cd client
+  npm install
+  npm run dev        (vite)
+  npm run build / npm run lint / npm run test (vitest)
+
+
+-------------------------------------------------------------------------------
+6. KNOWN ISSUES / TODO (found during code review)
+-------------------------------------------------------------------------------
+
+Security (fix first):
+  - backend/.env (Mongo URL, JWT secret, Cloudinary keys, Gmail password) is
+    committed to this public repo, and the old docs.txt contained a Cloudinary
+    api_secret. Rotate all of these and add .env to .gitignore.
+  - /reset-password only needs an email - it does not check that the OTP was
+    verified, so anyone can reset anyone's password.
+  - /getTaskId/:id, /editTodo/:id, /deleteTask/:id have no auth and no owner
+    check - any user can read / edit / delete any task.
+  - isAuthentication crashes if the Authorization header is missing, and
+    returns 500 instead of 401 for an invalid token.
+
+Bugs:
+  - createTodo: background email catch uses `err.message` but the variable is
+    `error` -> ReferenceError.
+  - forgetPassword: retrying sendOtpEmail inside catch can throw unhandled.
+  - editProfile returns the old user (missing { new: true }) and does not check
+    if the new email is already used.
+  - register: "user already exists" is checked after the avatar upload, and
+    errors are sent as HTTP 200 with a `code` field.
+  - Login saves AVATAR to localStorage but the API does not return avatar.
+  - ManageTodo category filter has no "Other" option (CreateTodo has it).
+  - API URL is hardcoded to localhost in client/src/api/api.ts.
+
+Cleanup:
+  - backend/node_modules is committed - remove and add to .gitignore.
+  - Unused client deps: @google/genai, @tensorflow/*, @reduxjs/toolkit,
+    react-redux, @tanstack/react-query, styled-components.
+  - TaskProvider (context) and ManageTodo both fetch the task list.
+  - Only a placeholder test exists (client/src/tests/main.test.ts).
