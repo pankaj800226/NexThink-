@@ -7,35 +7,102 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  gap: 1rem;
+  padding: 12px 5%;
   position: sticky;
   top: 0;
   z-index: 100;
 
   .logo {
-    width: 30px;
-    height: 30px;
-    background-color: rgba(245, 245, 245, 0.779);
-    border-radius: 50%;
     display: flex;
-    gap: 1rem;
-    justify-content: space-around;
     align-items: center;
-    border: 2px solid whitesmoke;
-    cursor: pointer;
-    div {
-      margin-left: 2rem;
-      a {
-        color: white;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 19px;
+    gap: 10px;
+    z-index: 2;
+
+    .logo_icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #0f1214;
+      background: linear-gradient(135deg, #f7c948, #ff9f43);
+      box-shadow: 0 0 14px rgba(247, 201, 72, 0.45);
+      transition: transform 0.3s ease;
+    }
+
+    .logo_text {
+      color: #fff;
+      font-weight: 700;
+      font-size: 21px;
+      letter-spacing: 0.5px;
+
+      span {
+        color: #f7c948;
       }
+    }
+
+    &:hover .logo_icon {
+      transform: rotate(-8deg) scale(1.05);
     }
   }
 
   nav {
-    div {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    .nav_links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+
+      a {
+        position: relative;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 15px;
+        font-weight: 500;
+        padding: 6px 0;
+        transition: color 0.25s ease;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 2px;
+          border-radius: 2px;
+          background: #f7c948;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.25s ease;
+        }
+
+        &:hover,
+        &.active {
+          color: #fff;
+
+          &::after {
+            transform: scaleX(1);
+          }
+        }
+      }
+    }
+
+    .nav_actions {
+      display: flex;
+      align-items: center;
+
+      .avatar_btn {
+        min-width: 0;
+        padding: 0;
+        border-radius: 50%;
+      }
+
       p {
         background-color: rgba(255, 255, 255, 0.886);
         color: black;
@@ -45,7 +112,96 @@ header {
         display: flex;
         justify-content: center;
         align-items: center;
+        font-weight: 600;
       }
+
+      .login_btn {
+        color: #0f1214;
+        background: #f7c948;
+        border-radius: 8px;
+        padding: 6px 16px;
+        text-transform: none;
+        font-weight: 600;
+
+        &:hover {
+          background: #ffd966;
+        }
+      }
+    }
+  }
+
+  .menu_toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .menu_backdrop {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    // backdrop-filter would make the fixed drawer relative to the header
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(15, 18, 20, 0.96);
+
+    .menu_toggle {
+      display: grid;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(280px, 80vw);
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 2rem;
+      padding: 84px 28px 28px;
+      background: #14181b;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+      transform: translateX(100%);
+      transition: transform 0.35s ease;
+      z-index: 1;
+
+      &.open {
+        transform: translateX(0);
+      }
+
+      .nav_links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.25rem;
+        width: 100%;
+
+        li {
+          width: 100%;
+        }
+
+        a {
+          display: block;
+          font-size: 17px;
+        }
+      }
+    }
+
+    .menu_backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.55);
     }
   }
 }

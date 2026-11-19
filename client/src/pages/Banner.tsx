@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 const Banner = () => {
     return (
-        <div className="banner_wrapper">
+        <div className="banner_wrapper" id="about">
             {/* Background Color Blobs */}
             <div className="bg_blob blob1"></div>
             <div className="bg_blob blob2"></div>

@@ -30,7 +30,7 @@ const Feature = () => {
   ];
 
   return (
-    <div className="feature_wrapper">
+    <div className="feature_wrapper" id="services">
       {/* Background blobs */}
       <div className="feature_blob blob_a"></div>
       <div className="feature_blob blob_b"></div>
