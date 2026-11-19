@@ -26,8 +26,15 @@ const Header = () => {
     const email = localStorage.getItem('EMAIL')
 
     React.useEffect(() => {
-        if (!location.hash) return
-        document.querySelector(location.hash)?.scrollIntoView({ behavior: 'smooth' })
+        const id = decodeURIComponent(location.hash.slice(1))
+        if (!id) return
+        let attempts = 0
+        const timer = window.setInterval(() => {
+            const target = document.getElementById(id)
+            if (target) target.scrollIntoView({ behavior: 'smooth' })
+            if (target || ++attempts >= 20) window.clearInterval(timer)
+        }, 100)
+        return () => window.clearInterval(timer)
     }, [location])
 
     React.useEffect(() => {
