@@ -26,7 +26,7 @@ const Header = () => {
     const email = localStorage.getItem('EMAIL')
 
     React.useEffect(() => {
-        const id = decodeURIComponent(location.hash.slice(1))
+        const id = location.hash.slice(1)
         if (!id) return
         let attempts = 0
         const timer = window.setInterval(() => {
